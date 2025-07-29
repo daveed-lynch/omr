@@ -905,11 +905,15 @@ int32_t TR::S390PseudoInstruction::estimateBinaryLength(int32_t currentEstimate)
 // TR::S390DebugCounterBumpInstruction:: member functions
 ////////////////////////////////////////////////////////////////////////////////
 
-void TR::S390DebugCounterBumpInstruction::assignRegisters(TR_RegisterKinds kindToBeAssigned)
-{
-    // Find a free real register for DCB to use during binary encoding to avoid spilling scratch registers
-    for (auto i = TR::RealRegister::FirstGPR + 1; i <= TR::RealRegister::LastAssignableGPR; i++) {
-        TR::RealRegister *realReg = cg()->machine()->realRegister(static_cast<TR::RealRegister::RegNum>(i));
+void
+TR::S390DebugCounterBumpInstruction::assignRegisters(TR_RegisterKinds kindToBeAssigned)
+   {
+   if (getRegisterOperand(1))
+      return Instruction::assignRegisters(kindToBeAssigned);
+   // Find a free real register for DCB to use during binary encoding to avoid spilling scratch registers
+   for (auto i = TR::RealRegister::FirstGPR + 1; i <= TR::RealRegister::LastAssignableGPR; i++)
+      {
+      TR::RealRegister *realReg = cg()->machine()->realRegister(static_cast<TR::RealRegister::RegNum>(i));
 
         if (realReg->getState() == TR::RealRegister::Free) {
             _assignableReg = realReg;
@@ -943,15 +947,21 @@ uint8_t *TR::S390DebugCounterBumpInstruction::generateBinaryEncoding()
 
     int32_t offsetToLongDispSlot = (cg()->getLinkage())->getOffsetToLongDispSlot();
 
-    TR::RealRegister *scratchReg = getAssignableReg();
-    bool spillNeeded = true;
+   TR::Register * assignableRegister = getRegisterOperand(1);
+   if (assignableRegister == NULL)
+      assignableRegister = getAssignableReg();
+   TR::RealRegister * scratchReg  = toRealRegister(assignableRegister);
+   bool spillNeeded = true;
 
-    // If we found a free register during RA, we don't need to spill
-    if (scratchReg) {
-        spillNeeded = false;
-    } else {
-        scratchReg = assignBestSpillRegister();
-    }
+   // If we found a free register during RA, we don't need to spill
+   if (assignableRegister)
+      {
+      spillNeeded = false;
+      }
+   else
+      {
+	   scratchReg = assignBestSpillRegister();
+      }
 
     TR_ASSERT(scratchReg != NULL,
         "TR_S390DebugCounterBumpInstruction::generateBinaryEncoding -- A scratch reg should always be found.");

@@ -573,8 +573,8 @@ private:
     /** Contains address information necessary for LGRL during binary encoding */
     TR::Snippet *_counterSnippet;
 
-    /** A free real register for DCB to use during binary encoding */
-    TR::RealRegister *_assignableReg;
+   /** A free real register for DCB to use during binary encoding */
+   TR::Register * _assignableReg;
 
     /** Specifies amount to increment the counter */
     int32_t _delta;
@@ -596,10 +596,25 @@ public:
         , _delta(delta)
     {}
 
-    /**
-     * @return Assigned Real Register
-     */
-    TR::RealRegister *getAssignableReg() { return _assignableReg; }
+   S390DebugCounterBumpInstruction(TR::InstOpCode::Mnemonic op,
+                                      TR::Node *n,
+                                      TR::Snippet* counterSnip,
+                                      TR::CodeGenerator *cg,
+                                      int32_t delta,
+                                      TR::Instruction *precedingInstruction,
+                                      TR::Register *addressRegister)
+      : S390PseudoInstruction(op, n, NULL, precedingInstruction, cg),
+        _counterSnippet(counterSnip),
+        _assignableReg(addressRegister),
+        _delta(delta)
+        {
+        useTargetRegister(addressRegister);
+        }
+
+   /**
+   * @return Assigned Register
+   */
+   TR::Register * getAssignableReg(){ return _assignableReg; }
 
     /**
      * @return The snippet that holds the debugCounter's counter address in persistent memory
@@ -613,8 +628,45 @@ public:
 
     virtual void assignRegisters(TR_RegisterKinds kindToBeAssigned);
 
-    virtual uint8_t *generateBinaryEncoding();
-};
+   virtual uint8_t *generateBinaryEncoding();
+
+   virtual const char *description() { return "S390RegInstruction"; }
+   virtual Kind getKind() { return IsReg; }
+   virtual bool isRegInstruction() { return getRegisterOperand(1) ? true : false; }
+
+   bool matchesTargetRegister(TR::Register* reg)
+      {
+      TR::Register * targetReg = getRegisterOperand(1);
+      if (targetReg)
+         {
+         TR::RealRegister * realReg = NULL;
+         if (reg->getKind() != TR_FPR && reg->getKind() != TR_VRF && reg->getRealRegister())
+            {
+            realReg = toRealRegister(reg);
+            }
+         if (reg->getKind() != TR_FPR && reg->getKind() != TR_VRF && targetReg->getRealRegister())
+            {
+            TR::RealRegister *targetReg1 = (TR::RealRegister *)targetReg;
+            return realReg == targetReg1;
+            }
+         return targetReg == reg;
+         }
+      return false;
+      }
+
+   virtual bool refsRegister(TR::Register *reg)
+      {
+      if (matchesTargetRegister(reg))
+         {
+         return true;
+         }
+      else if (getDependencyConditions())
+         {
+         return getDependencyConditions()->refsRegister(reg);
+         }
+      return false;
+      }
+   };
 
 ////////////////////////////////////////////////////////////////////////////////
 // S390AnnotationInstruction Class Definition

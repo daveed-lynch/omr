@@ -691,7 +691,10 @@ public:
     // Writable Data List functions
     bool hasWritableDataSnippets() { return _writableList.empty() ? false : true; }
 
-    TR::S390WritableDataSnippet *CreateWritableConstant(TR::Node *);
+   TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter, int32_t delta, TR::RegisterDependencyConditions *cond, TR::Register *addressRegister = 0);
+   TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter, TR::Register *deltaReg, TR::RegisterDependencyConditions *cond);
+   TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter, int32_t delta, TR_ScratchRegisterManager &srm);
+   TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter, TR::Register *deltaReg, TR_ScratchRegisterManager &srm);
 
     // OutOfLineCodeSection List functions
     TR::list<TR_S390OutOfLineCodeSection *> &getS390OutOfLineCodeSectionList() { return _outOfLineCodeSectionList; }
