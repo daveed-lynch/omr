@@ -907,19 +907,10 @@ int32_t TR::S390PseudoInstruction::estimateBinaryLength(int32_t currentEstimate)
 
 void TR::S390DebugCounterBumpInstruction::assignRegisters(TR_RegisterKinds kindToBeAssigned)
 {
-    if (getRegisterOperand(1))
-      return Instruction::assignRegisters(kindToBeAssigned);
-    // Find a free real register for DCB to use during binary encoding to avoid spilling scratch registers
-    for (auto i = TR::RealRegister::FirstGPR + 1; i <= TR::RealRegister::LastAssignableGPR; i++) {
-        TR::RealRegister *realReg = cg()->machine()->realRegister(static_cast<TR::RealRegister::RegNum>(i));
-
-        if (realReg->getState() == TR::RealRegister::Free) {
-            _assignableReg = realReg;
-            realReg->setHasBeenAssignedInMethod(true);
-            break;
-        }
-    }
-
+    // Leaving _assignableReg NULL forces generateBinaryEncoding() to safely spill/restore
+    // the scratch register using STG/LG on the thread's long-disp slot (GPR5), preventing
+    // clobbering of hardware calling convention registers like GPR1 (this pointer).
+    _assignableReg = NULL;
     assignRegistersAndDependencies(kindToBeAssigned);
 }
 
