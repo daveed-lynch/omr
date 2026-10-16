@@ -634,7 +634,7 @@ TR::Instruction *generateS390PseudoInstruction(TR::CodeGenerator *cg, TR::InstOp
 TR::Instruction *generateS390PseudoInstruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op, TR::Node *n,
     TR::RegisterDependencyConditions *cond, int32_t regNum, TR::Node *fenceNode = NULL, TR::Instruction *preced = 0);
 TR::Instruction *generateS390DebugCounterBumpInstruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op,
-    TR::Node *n, TR::Snippet *cas, int32_t d = 1, TR::Instruction *preced = 0);
+    TR::Node *n, TR::Snippet *cas, int32_t d = 1, TR::Instruction *preced = 0,TR::Register *addressRegister = 0);
 
 TR::Instruction *generateShiftRightImmediate(TR::CodeGenerator *cg, TR::Node *node, TR::Register *trgReg,
     TR::Register *srcReg, int32_t imm, TR::Instruction *preced = 0);

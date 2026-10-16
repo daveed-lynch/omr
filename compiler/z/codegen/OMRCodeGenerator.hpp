@@ -699,7 +699,7 @@ public:
     TR_S390OutOfLineCodeSection *findOutLinedInstructionsFromLabel(TR::LabelSymbol *label);
 
     TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter, int32_t delta,
-        TR::RegisterDependencyConditions *cond);
+        TR::RegisterDependencyConditions *cond, TR::Register *addressRegister = 0);
     TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter,
         TR::Register *deltaReg, TR::RegisterDependencyConditions *cond);
     TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter, int32_t delta,

@@ -1906,9 +1906,13 @@ TR::Instruction *generateS390PseudoInstruction(TR::CodeGenerator *cg, TR::InstOp
  * @param preced  A pointer to the preceding instruction. It is required if this is called after register assignment
  */
 TR::Instruction *generateS390DebugCounterBumpInstruction(TR::CodeGenerator *cg, TR::InstOpCode::Mnemonic op,
-    TR::Node *n, TR::Snippet *cs, int32_t delta, TR::Instruction *preced)
+    TR::Node *n, TR::Snippet *cs, int32_t delta, TR::Instruction *preced, TR::Register *addressRegister)
 {
     if (preced) {
+         if(addressRegister)
+            {
+               return new (INSN_HEAP) TR::S390DebugCounterBumpInstruction(op, n, cs, cg, delta, preced, addressRegister);
+            }
         return new (INSN_HEAP) TR::S390DebugCounterBumpInstruction(op, n, cs, cg, delta, preced);
     }
     return new (INSN_HEAP) TR::S390DebugCounterBumpInstruction(op, n, cs, cg, delta);

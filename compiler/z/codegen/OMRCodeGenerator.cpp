@@ -4232,14 +4232,14 @@ bool OMR::Z::CodeGenerator::IsInMemoryType(TR::DataType type)
  * architecture eliminates them
  */
 TR::Instruction *OMR::Z::CodeGenerator::generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter,
-    int32_t delta, TR::RegisterDependencyConditions *cond)
+    int32_t delta, TR::RegisterDependencyConditions *cond, TR::Register *addressRegister)
 {
     TR::Snippet *constant = self()->Create8ByteConstant(cursor->getNode(),
         reinterpret_cast<intptr_t>(
             counter->getBumpCountSymRef(comp())->getSymbol()->getStaticSymbol()->getStaticAddress()),
         false);
     return generateS390DebugCounterBumpInstruction(self(), TR::InstOpCode::DCB, cursor->getNode(), constant, delta,
-        cursor);
+        cursor, addressRegister);
 }
 
 TR::Instruction *OMR::Z::CodeGenerator::generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter,

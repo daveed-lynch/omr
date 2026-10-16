@@ -656,7 +656,7 @@ public:
     TR::Instruction *generateDebugCounter(TR::Instruction *cursor, const char *name, TR::Register *deltaReg,
         int8_t fidelity = TR::DebugCounter::Undetermined, int32_t staticDelta = 1);
     TR::Instruction *generateDebugCounter(const char *name, TR::RegisterDependencyConditions &cond, int32_t delta = 1,
-        int8_t fidelity = TR::DebugCounter::Undetermined, int32_t staticDelta = 1, TR::Instruction *cursor = NULL);
+        int8_t fidelity = TR::DebugCounter::Undetermined, int32_t staticDelta = 1, TR::Instruction *cursor = NULL, TR::Register *addressRegister = NULL);
     TR::Instruction *generateDebugCounter(const char *name, TR::Register *deltaReg,
         TR::RegisterDependencyConditions &cond, int8_t fidelity = TR::DebugCounter::Undetermined,
         int32_t staticDelta = 1, TR::Instruction *cursor = NULL);
@@ -672,7 +672,7 @@ public:
     }
 
     TR::Instruction *generateDebugCounterBump(TR::Instruction *cursor, TR::DebugCounterBase *counter,
-        TR::Register *deltaReg, TR::RegisterDependencyConditions *cond)
+        TR::Register *deltaReg, TR::RegisterDependencyConditions *cond, TR::Register *addressRegister = NULL)
     {
         return cursor;
     }

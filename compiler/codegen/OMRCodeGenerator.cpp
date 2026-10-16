@@ -2654,7 +2654,7 @@ TR::Instruction *OMR::CodeGenerator::generateDebugCounter(TR::Instruction *curso
 }
 
 TR::Instruction *OMR::CodeGenerator::generateDebugCounter(const char *name, TR::RegisterDependencyConditions &cond,
-    int32_t delta, int8_t fidelity, int32_t staticDelta, TR::Instruction *cursor)
+    int32_t delta, int8_t fidelity, int32_t staticDelta, TR::Instruction *cursor, TR::Register *addressRegister)
 {
     if (!cursor)
         cursor = getAppendInstruction();
@@ -2677,7 +2677,7 @@ TR::Instruction *OMR::CodeGenerator::generateDebugCounter(const char *name, TR::
     if (TR::DebugCounter::relocatableDebugCounter(comp()))
         comp()->mapStaticAddressToCounter(symref, aggregatedCounters);
 
-    return self()->generateDebugCounterBump(cursor, aggregatedCounters, 1, &cond);
+    return self()->generateDebugCounterBump(cursor, aggregatedCounters, 1, &cond, addressRegister);
 }
 
 TR::Instruction *OMR::CodeGenerator::generateDebugCounter(const char *name, TR::Register *deltaReg,
